@@ -1,29 +1,43 @@
 # Parallel AES Cryptography with CUDA
 
-This project implements parallel encryption and decryption algorithms using **CUDA C**, leveraging GPU architecture for high-performance cryptographic operations.
+This project implements the full **AES (Advanced Encryption Standard)** algorithm for both encryption and decryption using **CUDA C**. It demonstrates how symmetric block ciphers like AES can be parallelized and executed on the GPU for significant speedups.
 
-The implementation demonstrates how symmetric key encryption can be efficiently parallelized across many threads, significantly improving performance compared to CPU-based methods.
+The code was tested and executed successfully using **Visual Studio Code** and an **NVIDIA GTX 1650** GPU.
 
 ## 📂 Contents
 
-- `encrypt.cu` – CUDA kernel for data encryption
-- `decrypt.cu` – CUDA kernel for data decryption
+- `encrypt.cu` – CUDA source file for AES encryption
+- `decrypt.cu` – CUDA source file for AES decryption
 
-## 🔒 Algorithm Overview
+## 🔐 Algorithm Overview
 
-The encryption algorithm is a simplified block cipher operating on data chunks using XOR-based operations in parallel threads.
+- AES-128 standard (Rijndael cipher)
+- 128-bit block size
+- 10 rounds with:
+  - SubBytes
+  - ShiftRows
+  - MixColumns
+  - AddRoundKey
+- Key expansion (key scheduling) fully implemented
+- Parallel processing of multiple data blocks using CUDA threads
 
-## 🛠️ Technologies Used
+## 🧠 CUDA Features Used
 
-- CUDA C / C++
-- NVIDIA GPU
-- NVCC compiler (from CUDA Toolkit)
+- Thread and block-level parallelism
+- Device memory management
+- Shared memory access (optional for optimization)
+- NVCC compilation targeting compute capability compatible with GTX 1650
 
-## 🚀 How to Compile & Run
+## 🛠️ Technologies
 
-You need a CUDA-compatible NVIDIA GPU and the **CUDA Toolkit** installed.
+- CUDA C/C++
+- NVIDIA GPU (GTX 1650 or higher)
+- Visual Studio Code (tested)
+- NVCC (NVIDIA CUDA Compiler)
 
-### 🔧 Compilation
+## 🚀 How to Compile and Run
+
+### 1. Compile with `nvcc`
 
 ```bash
 nvcc encrypt.cu -o encrypt
