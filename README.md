@@ -1,4 +1,4 @@
-# Parallel Encryption with CUDA
+# Parallel AES Cryptography with CUDA
 
 This project implements parallel encryption and decryption algorithms using **CUDA C**, leveraging GPU architecture for high-performance cryptographic operations.
 
