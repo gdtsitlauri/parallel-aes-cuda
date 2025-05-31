@@ -37,7 +37,7 @@ The code was tested and executed successfully using **Visual Studio Code** and a
 
 ## 🚀 How to Compile and Run
 
-### 1. Compile with `nvcc`
+### Compile with `nvcc`
 
 ```bash
 nvcc encrypt.cu -o encrypt
