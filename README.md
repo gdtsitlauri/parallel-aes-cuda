@@ -1,44 +1,75 @@
-# Parallel AES Cryptography with CUDA
+# Parallel AES-128 with CUDA
 
-This project implements the full **AES (Advanced Encryption Standard)** algorithm for both encryption and decryption using **CUDA C**. It demonstrates how symmetric block ciphers like AES can be parallelized and executed on the GPU for significant speedups.
+**How fast is AES-128 on a GPU when every thread encrypts its own block, and when is it worth it?**
 
-The code was tested and executed successfully using **Visual Studio Code** and an **NVIDIA GTX 1650** GPU.
+This project implements AES-128 (FIPS-197) for NVIDIA GPUs in CUDA C++. Each GPU thread processes one
+16-byte block, so millions of blocks are encrypted in parallel, in ECB mode (encryption and decryption)
+and in CTR mode (the counter mode of NIST SP 800-38A, where encryption and decryption are the same
+operation).
 
-## 📂 Contents
+| part | what it does |
+| --- | --- |
+| `src/aes_gpu.cuh` | the kernels: round keys in constant memory; each thread block builds its T-table and S-box in shared memory; one thread per block in a grid-stride loop; 16-byte vector loads and stores |
+| `src/aes_cpu.h` | key expansion (including the round keys of the equivalent inverse cipher) and a byte-oriented reference AES used to check the GPU |
+| `src/aes_cuda.cu` | stand-alone program: known-answer tests on the GPU, random data checked against the CPU reference, throughput |
+| `tests/verify_gpu.py` | runs the same kernels through NVRTC (CuPy) and checks them against OpenSSL; needs no C++ host compiler |
+| `tests/test_cpu_ref.cpp` | checks the CPU reference against FIPS-197 and SP 800-38A |
 
-- `encrypt.cu` – CUDA source file for AES encryption
-- `decrypt.cu` – CUDA source file for AES decryption
+## Main results
 
-## 🔐 Algorithm Overview
+Measured on an NVIDIA GeForce GTX 1650 (14 SMs) with `tests/verify_gpu.py`; logs in `results/`.
 
-- AES-128 standard (Rijndael cipher)
-- 128-bit block size
-- 10 rounds with:
-  - SubBytes
-  - ShiftRows
-  - MixColumns
-  - AddRoundKey
-- Key expansion (key scheduling) fully implemented
-- Parallel processing of multiple data blocks using CUDA threads
+1. **The kernels are correct.** They reproduce the FIPS-197 Appendix B and C.1 vectors and the
+   SP 800-38A F.1.1/F.1.2 (ECB) and F.5.1/F.5.2 (CTR) vectors. On 256 MiB of random data with a
+   random key, ECB encryption and CTR are byte-identical to OpenSSL, and ECB decryption inverts
+   encryption. The CTR test starts the counter just below 2^64, so the carry into the upper half of
+   the 128-bit counter is exercised.
+2. **The GPU computes AES at 12.9 GB/s (ECB) and 14.6 GB/s (CTR)**, measured as kernel time on data
+   already in GPU memory.
+3. **For data that starts in host memory, one CPU core with AES-NI is faster.** Including the copies
+   between host and GPU memory, the GTX 1650 reaches about 1.3 GB/s, while OpenSSL on one core of
+   the test machine reaches 2.3 GB/s (ECB) and 3.4 GB/s (CTR) (`results/comparison.txt`). The GPU
+   pays off when the data is produced or consumed on the GPU, or on CPUs without AES instructions.
 
-## 🧠 CUDA Features Used
+## Folder map
 
-- Thread and block-level parallelism
-- Device memory management
-- Shared memory access (optional for optimization)
-- NVCC compilation targeting compute capability compatible with GTX 1650
+```
+parallel-aes-cuda/
+  src/aes_gpu.cuh, src/aes_cpu.h, src/aes_cuda.cu
+  tests/verify_gpu.py, tests/test_cpu_ref.cpp
+  results/          GPU verification log, CPU reference log, comparison with OpenSSL
+```
 
-## 🛠️ Technologies
+## Building and running
 
-- CUDA C/C++
-- NVIDIA GPU (GTX 1650 or higher)
-- Visual Studio Code (tested)
-- NVCC (NVIDIA CUDA Compiler)
-
-## 🚀 How to Compile and Run
-
-### Compile with `nvcc`
+With the CUDA toolkit (nvcc and a host compiler: GCC on Linux, Visual Studio on Windows):
 
 ```bash
-nvcc encrypt.cu -o encrypt
-nvcc decrypt.cu -o decrypt
+nvcc -O3 -std=c++17 -Isrc -o aes_cuda src/aes_cuda.cu
+./aes_cuda 64            # known answers, 64 MiB of random data, throughput
+```
+
+Without a host compiler, the kernels can be compiled at run time with NVRTC:
+
+```bash
+pip install cupy-cuda12x cryptography     # cupy-cuda13x for CUDA 13
+python tests/verify_gpu.py 64
+```
+
+The CPU reference alone:
+
+```bash
+g++ -std=c++17 -O2 tests/test_cpu_ref.cpp -o test_cpu_ref && ./test_cpu_ref
+```
+
+## Notes
+
+- ECB mode is included because it is the simplest parallel mode and the one tested by FIPS-197; it
+  should not be used to encrypt real data, since equal blocks give equal ciphertexts. CTR is the mode
+  to use, normally with an authentication tag (as in GCM).
+- The T-table implementation does table lookups that depend on the key and the data, so it is not
+  protected against cache-timing side channels.
+
+## Author
+
+George David Tsitlauri, University of Thessaly.

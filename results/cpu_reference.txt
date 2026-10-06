@@ -1,0 +1,6 @@
+  FIPS-197 C.1 encrypt                 PASS
+  FIPS-197 C.1 decrypt                 PASS
+  FIPS-197 B encrypt                   PASS
+  SP 800-38A F.5.1 block 1             PASS
+  SP 800-38A F.5.1 block 2 (carry)     PASS
+all CPU reference tests passed

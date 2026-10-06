@@ -1,0 +1,23 @@
+GPU: NVIDIA GeForce GTX 1650 (14 SMs), kernels compiled with NVRTC from src/aes_gpu.cuh
+
+Known-answer tests
+  FIPS-197 Appendix B encrypt                   PASS
+  FIPS-197 Appendix B decrypt                   PASS
+  SP 800-38A F.1.1 ECB encrypt (4 blocks)       PASS
+  SP 800-38A F.1.2 ECB decrypt (4 blocks)       PASS
+  SP 800-38A F.5.1 CTR encrypt (4 blocks)       PASS
+  SP 800-38A F.5.2 CTR decrypt (4 blocks)       PASS
+  FIPS-197 Appendix C.1 encrypt                 PASS
+  FIPS-197 Appendix C.1 decrypt                 PASS
+
+Random data: 256 MiB (16,777,216 blocks), random key, counter crossing 2^64
+  ECB encrypt equals OpenSSL                    PASS
+  ECB decrypt(encrypt(x)) equals x              PASS
+  CTR equals OpenSSL                            PASS
+
+Kernel throughput (best of 3, kernel time only)
+  ECB encrypt  12.87 GB/s
+  ECB decrypt  12.87 GB/s
+  CTR          14.58 GB/s
+
+all tests passed
