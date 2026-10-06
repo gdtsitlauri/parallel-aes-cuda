@@ -38,9 +38,9 @@ Linux). Logs in `results/`.
 
    The T4 has almost three times as many SMs, yet both cards reach about the same throughput; the
    kernels have not been profiled to find what limits them (the T4 runs at lower clocks within a 70 W
-   power limit, which is one candidate). The stand-alone
-   program times a single run without warm-up, so its figures vary more (on the T4 it once reported
-   21.6 GB/s for ECB encryption); they are not used as the benchmark.
+   power limit, which is one candidate). The stand-alone program times a single run without warm-up,
+   so its figures vary more (on the T4 it once reported 21.6 GB/s for ECB encryption); they are not
+   used as the benchmark.
 4. **For data that starts in host memory, one CPU core with AES-NI is faster.** Including the copies
    between host and GPU memory, the GTX 1650 reaches about 1.3 GB/s, while OpenSSL on one core of
    the test machine reaches 2.3 GB/s (ECB) and 3.4 GB/s (CTR) (`results/comparison.txt`). The GPU
