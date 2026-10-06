@@ -1,0 +1,24 @@
+# tests/verify_gpu.py 64 on Google Colab, Tesla T4 (2026-10-06)
+GPU: Tesla T4 (40 SMs), kernels compiled with NVRTC from src/aes_gpu.cuh
+
+Known-answer tests
+  FIPS-197 Appendix B encrypt                   PASS
+  FIPS-197 Appendix B decrypt                   PASS
+  SP 800-38A F.1.1 ECB encrypt (4 blocks)       PASS
+  SP 800-38A F.1.2 ECB decrypt (4 blocks)       PASS
+  SP 800-38A F.5.1 CTR encrypt (4 blocks)       PASS
+  SP 800-38A F.5.2 CTR decrypt (4 blocks)       PASS
+  FIPS-197 Appendix C.1 encrypt                 PASS
+  FIPS-197 Appendix C.1 decrypt                 PASS
+
+Random data: 64 MiB (4,194,304 blocks), random key, counter crossing 2^64
+  ECB encrypt equals OpenSSL                    PASS
+  ECB decrypt(encrypt(x)) equals x              PASS
+  CTR equals OpenSSL                            PASS
+
+Kernel throughput (best of 3, kernel time only)
+  ECB encrypt  12.07 GB/s
+  ECB decrypt  12.07 GB/s
+  CTR          13.69 GB/s
+
+all tests passed

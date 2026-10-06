@@ -1,0 +1,27 @@
+# nvcc -O3 -std=c++17 -Isrc -o aes_cuda src/aes_cuda.cu && ./aes_cuda 64
+# on Google Colab, Tesla T4 (2026-10-06). The throughput lines time a single run of each kernel,
+# without warm-up, so they vary from run to run; tests/verify_gpu.py (best of 3) gives the benchmark.
+GPU: Tesla T4 (40 SMs)
+
+Known-answer tests
+  FIPS-197 Appendix B encrypt              PASS
+  FIPS-197 Appendix B decrypt              PASS
+  SP 800-38A F.1.1 ECB encrypt (4 blocks)  PASS
+  SP 800-38A F.1.2 ECB decrypt (4 blocks)  PASS
+  SP 800-38A F.5.1 CTR encrypt (4 blocks)  PASS
+  SP 800-38A F.5.2 CTR decrypt (4 blocks)  PASS
+  FIPS-197 Appendix C.1 encrypt            PASS
+  FIPS-197 Appendix C.1 decrypt            PASS
+
+Random data: 64 MiB, 4194304 blocks
+  ECB encrypt: 0 blocks differ from the CPU
+  ECB decrypt(encrypt(x)) == x: yes
+  CTR: 0 blocks differ from the CPU
+
+Throughput (kernel time, GB/s)
+  ECB encrypt 21.58
+  ECB decrypt 12.06
+  CTR         13.79
+  CPU reference, one core (byte-oriented, unoptimised): 0.038 GB/s
+
+all tests passed
