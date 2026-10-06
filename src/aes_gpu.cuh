@@ -21,7 +21,7 @@
 typedef unsigned int uint32_t;
 typedef unsigned char uint8_t;
 typedef unsigned long long uint64_t;
-typedef unsigned long long size_t;
+// size_t is predefined by NVRTC (unsigned long on Linux, unsigned long long on Windows)
 #endif
 
 __constant__ uint32_t c_rk[44];
