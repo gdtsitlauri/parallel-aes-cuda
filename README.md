@@ -79,7 +79,7 @@ The CPU reference alone:
 g++ -std=c++17 -O2 tests/test_cpu_ref.cpp -o test_cpu_ref && ./test_cpu_ref
 ```
 
-## Notes
+## Limitations (reported as such)
 
 - ECB mode is included because it is the simplest parallel mode and the one tested by FIPS-197; it
   should not be used to encrypt real data, since equal blocks give equal ciphertexts. CTR is the mode
@@ -87,6 +87,6 @@ g++ -std=c++17 -O2 tests/test_cpu_ref.cpp -o test_cpu_ref && ./test_cpu_ref
 - The T-table implementation does table lookups that depend on the key and the data, so it is not
   protected against cache-timing side channels.
 
-## Author
+## Author and license
 
-George David Tsitlauri, University of Thessaly.
+George David Tsitlauri, University of Thessaly. MIT license ([LICENSE](LICENSE)).
