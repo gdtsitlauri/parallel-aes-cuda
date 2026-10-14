@@ -46,6 +46,14 @@ Linux). Logs in `results/`.
    the test machine reaches 2.3 GB/s (ECB) and 3.4 GB/s (CTR) (`results/comparison.txt`). The GPU
    pays off when the data is produced or consumed on the GPU, or on CPUs without AES instructions.
 
+## Limitations (reported as such)
+
+- ECB mode is included because it is the simplest parallel mode and the one tested by FIPS-197; it
+  should not be used to encrypt real data, since equal blocks give equal ciphertexts. CTR is the mode
+  to use, normally with an authentication tag (as in GCM).
+- The T-table implementation does table lookups that depend on the key and the data, so it is not
+  protected against cache-timing side channels.
+
 ## Folder map
 
 ```
@@ -78,14 +86,6 @@ The CPU reference alone:
 ```bash
 g++ -std=c++17 -O2 tests/test_cpu_ref.cpp -o test_cpu_ref && ./test_cpu_ref
 ```
-
-## Limitations (reported as such)
-
-- ECB mode is included because it is the simplest parallel mode and the one tested by FIPS-197; it
-  should not be used to encrypt real data, since equal blocks give equal ciphertexts. CTR is the mode
-  to use, normally with an authentication tag (as in GCM).
-- The T-table implementation does table lookups that depend on the key and the data, so it is not
-  protected against cache-timing side channels.
 
 ## Author and license
 
