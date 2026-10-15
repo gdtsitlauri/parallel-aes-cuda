@@ -89,4 +89,4 @@ g++ -std=c++17 -O2 tests/test_cpu_ref.cpp -o test_cpu_ref && ./test_cpu_ref
 
 ## Author and license
 
-George David Tsitlauri, Department of Informatics and Telecommunications, University of Thessaly, Lamia, Greece. MIT license ([LICENSE](LICENSE)).
+George David Tsitlauri, Department of Informatics and Telecommunications, University of Thessaly, Greece. MIT license ([LICENSE](LICENSE)).
